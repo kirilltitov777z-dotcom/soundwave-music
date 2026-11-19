@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Семь песен — собрано в один архив</title>
+<meta name="description" content="Семь последних загрузок в одном ZIP-архиве. Одна кнопка — и все треки у тебя.">
+<meta name="theme-color" content="#3F51B5">
+<style>
+  :root{
+    --primary:#3F51B5;
+    --primary-dark:#303F9F;
+    --primary-soft:#E8EAF6;
+    --accent:#FF7043;
+    --bg:#F4F6F9;
+    --surface:#FFFFFF;
+    --text:#202124;
+    --muted:#5F6368;
+    --line:#E8EAED;
+    --shadow:0 1px 2px rgba(32,33,36,.10),0 4px 12px rgba(32,33,36,.06);
+    --shadow-hover:0 2px 4px rgba(32,33,36,.12),0 10px 24px rgba(32,33,36,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:Roboto,"Segoe UI",Arial,sans-serif;
+    background:var(--bg);color:var(--text);
+    -webkit-font-smoothing:antialiased;line-height:1.5;
+  }
+  .appbar{
+    background:var(--surface);border-bottom:1px solid var(--line);
+    position:sticky;top:0;z-index:10;
+  }
+  .appbar-inner{
+    max-width:1040px;margin:0 auto;padding:0 20px;height:64px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .brand{display:flex;align-items:center;gap:12px;font-size:19px;font-weight:500;letter-spacing:.2px}
+  .brand-mark{
+    width:36px;height:36px;border-radius:10px;background:var(--primary);
+    display:grid;place-items:center;color:#fff;
+  }
+  .chip{
+    background:var(--primary-soft);color:var(--primary-dark);
+    font-size:12px;font-weight:600;letter-spacing:.6px;
+    padding:7px 12px;border-radius:20px;text-transform:uppercase;
+  }
+  main{max-width:1040px;margin:0 auto;padding:0 20px}
+  .hero{
+    display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center;
+    padding:64px 0 56px;
+  }
+  .eyebrow{
+    display:inline-block;color:var(--primary);font-size:12px;font-weight:700;
+    letter-spacing:1.6px;text-transform:uppercase;margin-bottom:18px;
+  }
+  h1{font-size:clamp(32px,5.4vw,52px);line-height:1.12;font-weight:700;letter-spacing:-1px}
+  .lead{color:var(--muted);font-size:17px;margin:20px 0 30px;max-width:460px}
+  .btn{
+    display:inline-flex;align-items:center;gap:12px;
+    background:var(--primary);color:#fff;text-decoration:none;
+    padding:16px 26px;border-radius:12px;font-size:16px;font-weight:600;
+    box-shadow:var(--shadow);transition:background .2s,transform .2s,box-shadow .2s;
+  }
+  .btn:hover{background:var(--primary-dark);transform:translateY(-2px);box-shadow:var(--shadow-hover)}
+  .btn:active{transform:translateY(0)}
+  .btn svg{flex:none}
+  .btn.loading{pointer-events:none;opacity:.85}
+  .meta{margin-top:16px;color:var(--muted);font-size:13px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .meta i{width:4px;height:4px;border-radius:50%;background:#BDC1C6;display:inline-block}
+  .art{position:relative;height:300px;display:grid;place-items:center}
+  .disc{
+    width:230px;height:230px;border-radius:50%;
+    background:#263238;display:grid;place-items:center;position:relative;
+    box-shadow:var(--shadow);
+  }
+  .disc::before{
+    content:"";position:absolute;inset:26px;border-radius:50%;
+    border:1px solid rgba(255,255,255,.10);
+  }
+  .disc-label{
+    width:96px;height:96px;border-radius:50%;background:var(--primary);
+    display:grid;place-items:center;color:#fff;font-weight:700;font-size:26px;letter-spacing:-1px;
+  }
+  .art-card{
+    position:absolute;background:var(--surface);border-radius:14px;
+    box-shadow:var(--shadow);padding:12px 16px;display:flex;align-items:center;gap:12px;
+  }
+  .art-card.one{top:8px;right:0}
+  .art-card.two{bottom:10px;left:0}
+  .art-icon{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;color:#fff}
+  .art-icon.a{background:#546E7A}.art-icon.b{background:#7E57C2}
+  .art-line{width:74px}
+  .art-line b{display:block;height:9px;border-radius:5px;background:#DADCE0;margin-bottom:7px}
+  .art-line span{display:block;height:7px;width:60%;border-radius:4px;background:#E8EAED}
+  .section-title{font-size:22px;font-weight:600;margin-bottom:18px;letter-spacing:-.3px}
+  .card{
+    background:var(--surface);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;
+  }
+  .track{
+    display:flex;align-items:center;gap:16px;padding:16px 20px;
+    border-bottom:1px solid var(--line);
+  }
+  .track:last-child{border-bottom:none}
+  .num{
+    width:28px;flex:none;text-align:center;color:#9AA0A6;font-size:13px;font-weight:600;
+    font-variant-numeric:tabular-nums;
+  }
+  .note{
+    width:42px;height:42px;flex:none;border-radius:11px;background:var(--primary-soft);
+    color:var(--primary);display:grid;place-items:center;
+  }
+  .track-name{flex:1;min-width:0}
+  .track-name b{display:block;font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .track-name span{color:var(--muted);font-size:12px}
+  .size{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums;flex:none}
+  .note-bottom{
+    padding:22px 20px 6px;color:var(--muted);font-size:12px;text-align:center;
+  }
+  footer{
+    text-align:center;color:#9AA0A6;font-size:13px;padding:34px 20px 40px;
+  }
+  .toast{
+    position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);
+    background:#323740;color:#fff;padding:13px 20px;border-radius:10px;
+    font-size:14px;box-shadow:var(--shadow-hover);opacity:0;pointer-events:none;
+    transition:opacity .25s,transform .25s;z-index:20;
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  @media(max-width:760px){
+    .hero{grid-template-columns:1fr;padding:42px 0 36px;gap:28px}
+    .art{height:220px;order:-1}
+    .disc{width:180px;height:180px}
+    .disc-label{width:76px;height:76px;font-size:21px}
+    .art-card{transform:scale(.85)}
+    .art-card.one{right:-6px}.art-card.two{left:-6px}
+    .lead{font-size:16px}
+    .btn{width:100%;justify-content:center}
+    .size{display:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="appbar">
+  <div class="appbar-inner">
+    <div class="brand">
+      <span class="brand-mark">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
+      </span>
+      <span>Soundbox</span>
+    </div>
+    <span class="chip">7 треков</span>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-copy">
+      <span class="eyebrow">Подборка · 19 ноября 2026</span>
+      <h1>Семь песен<br>в одном архиве</h1>
+      <p class="lead">Твои семь последних загрузок собраны вместе. Один тап — и все треки уже в телефоне.</p>
+      <a class="btn" id="downloadBtn" href="7-pesn.zip" download="7-pesn.zip">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zm7-16v10.17l3.59-3.58L17 12l-5 5-5-5 1.41-1.41L11 14.17V4h1z"/></svg>
+        <span id="btnLabel">Скачать все 7 песен</span>
+      </a>
+      <div class="meta"><span>ZIP</span><i></i><span>7 MP3</span><i></i><span>49,5 МБ</span><i></i><span>Без регистрации</span></div>
+    </div>
+    <div class="art" aria-hidden="true">
+      <div class="disc"><div class="disc-label">7</div></div>
+      <div class="art-card one">
+        <span class="art-icon a"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg></span>
+        <span class="art-line"><b></b><span></span></span>
+      </div>
+      <div class="art-card two">
+        <span class="art-icon b"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg></span>
+        <span class="art-line"><b></b><span></span></span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Что внутри</h2>
+    <div class="card">
+      <div class="track">
+        <span class="num">01</span><span class="note"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg></span>
+        <div class="track-name"><b>AUD-20251101-WA0084</b><span>Аудиозапись</span></div><span class="size">9,1 МБ</span>
+      </div>
+      <div class="track">
+        <span class="num">02</span><span class="note"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg></span>
+        <div class="track-name"><b>BayuBajj — Крапива</b><span>MP3 · 8 191 698</span></div><span class="size">4,5 МБ</span>
+      </div>
+      <div class="track">
+        <span class="num">03</span><span class="note"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg></span>
+        <div class="track-name"><b>ENZRO — Ты не бойся ночи</b><span>MP3 · 81 423 717</span></div><span class="size">8,4 МБ</span>
+      </div>
+      <div class="track">
+        <span class="num">04</span><span class="note"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg></span>
+        <div class="track-name"><b>Миролюбова — Зимние розы</b><span>MP3</span></div><span class="size">7,7 МБ</span>
+      </div>
+      <div class="track">
+        <span class="num">05</span><span class="note"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg></span>
+        <div class="track-name"><b>Голуби — Ruslan Music</b><span>Официальный релиз, 2025</span></div><span class="size">7,5 МБ</span>
+      </div>
+      <div class="track">
+        <span class="num">06</span><span class="note"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg></span>
+        <div class="track-name"><b>Роман — А він тебе тримає</b><span>MP3</span></div><span class="size">8,3 МБ</span>
+      </div>
+      <div class="track">
+        <span class="num">07</span><span class="note"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg></span>
+        <div class="track-name"><b>Терехта поёт — SoNata</b><span>Версия v1</span></div><span class="size">4,1 МБ</span>
+      </div>
+    </div>
+    <div class="note-bottom">Имена файлов внутри архива сохранены как в загрузках.</div>
+  </section>
+</main>
+
+<footer>Собрано с заботой о порядке в загрузках · Material Design</footer>
+<div class="toast" id="toast">Архив скачивается — 7 треков в одном файле</div>
+
+<script>
+  const btn = document.getElementById('downloadBtn');
+  const label = document.getElementById('btnLabel');
+  const toast = document.getElementById('toast');
+  let timer;
+  btn.addEventListener('click', () => {
+    btn.classList.add('loading');
+    label.textContent = 'Скачивание…';
+    toast.classList.add('show');
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      btn.classList.remove('loading');
+      label.textContent = 'Скачать все 7 песен';
+      toast.classList.remove('show');
+    }, 4000);
+  });
+</script>
+</body>
+</html>
